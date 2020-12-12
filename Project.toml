@@ -1,0 +1,9 @@
+name = "UnderSea"
+uuid = "cdbf5ced-89e3-46be-b3a7-3add30ff83f0"
+authors = ["Peter Steidel <pks@codeis.moe>"]
+version = "0.1.0"
+
+[deps]
+GLFW = "f7f18e0c-5ee9-5ccd-a5bf-e8befd85ed98"
+LanguageServer = "2b0e0bc5-e4fd-59b4-8912-456d1b03d8d7"
+ModernGL = "66fc600b-dfda-50eb-8b99-91cfa97b1301"
