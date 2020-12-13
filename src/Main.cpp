@@ -10,7 +10,7 @@ int main(int argc, char **argv) {
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-  GLFWwindow *window = glfwCreateWindow(800, 600, "Learn", NULL, NULL);
+  GLFWwindow *window = glfwCreateWindow(400, 300, "Learn", NULL, NULL);
 
   if (window == nullptr) {
     std::cout << "Failed to create opengl window" << std::endl;
@@ -24,7 +24,7 @@ int main(int argc, char **argv) {
     return 1;
   }
 
-  glViewport(0, 0, 800, 600);
+  glViewport(0, 0, 400, 300);
   glClearColor(0,0,0,1);
   game_state game;
 

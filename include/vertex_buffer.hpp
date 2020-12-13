@@ -19,8 +19,12 @@ public:
 
   ~vertex_buffer() {
     if (_buffer != nullptr) {
+      // according to spec, this should free _buffer too
       glDeleteBuffers(1, &_object);
       _buffer = nullptr;
+    }
+    if (_attributes != 0) {
+      glDeleteVertexArrays(1, &_attributes);
     }
   }
 
@@ -46,7 +50,8 @@ public:
 
   vertex_buffer(vertex_buffer &&vb)
       : _object(std::exchange(vb._object, 0)),
-        _buffer(std::exchange(vb._buffer, nullptr)) {}
+        _buffer(std::exchange(vb._buffer, nullptr)),
+        _attributes(std::exchange(vb._attributes, 0)) {}
 
   T &get() { return *_buffer; }
 
