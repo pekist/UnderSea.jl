@@ -1,0 +1,57 @@
+[
+    {
+        "arguments": [
+            "clang++",
+            "-c",
+            "--std=c++20",
+            "-g",
+            "-Iinclude",
+            "-o",
+            "src/game_state.o",
+            "src/game_state.cpp"
+        ],
+        "directory": "/home/pks/src/under-sea",
+        "file": "src/game_state.cpp"
+    },
+    {
+        "arguments": [
+            "clang++",
+            "-c",
+            "--std=c++20",
+            "-g",
+            "-Iinclude",
+            "-o",
+            "src/Main.o",
+            "src/Main.cpp"
+        ],
+        "directory": "/home/pks/src/under-sea",
+        "file": "src/Main.cpp"
+    },
+    {
+        "arguments": [
+            "clang",
+            "-c",
+            "-g",
+            "-Iinclude",
+            "-o",
+            "src/glad.o",
+            "src/glad.c"
+        ],
+        "directory": "/home/pks/src/under-sea",
+        "file": "src/glad.c"
+    },
+    {
+        "arguments": [
+            "clang++",
+            "-c",
+            "--std=c++20",
+            "-g",
+            "-Iinclude",
+            "-o",
+            "src/shader.o",
+            "src/shader.cpp"
+        ],
+        "directory": "/home/pks/src/under-sea",
+        "file": "src/shader.cpp"
+    }
+]
