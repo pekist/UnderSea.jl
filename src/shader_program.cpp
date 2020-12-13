@@ -44,3 +44,6 @@ shader_program::~shader_program() {
 }
 
 GLuint shader_program::raw_program() const { return _program; }
+
+void shader_program::use() { glUseProgram(_program); }
+void shader_program::clear() { glUseProgram(0); }

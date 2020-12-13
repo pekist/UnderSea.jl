@@ -1,3 +1,4 @@
+#pragma once
 #include "glad/glad.h"
 
 #include "shader.hpp"
@@ -14,6 +15,9 @@ public:
   std::string info_log();
 
   GLuint raw_program() const;
+  void use();
+
+  static void clear();
   ~shader_program();
 
   shader_program &operator=(const shader_program &) = delete;

@@ -1,1 +1,4 @@
 .clangd
+*.o
+*.trace
+under-sea

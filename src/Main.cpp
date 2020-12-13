@@ -1,3 +1,4 @@
+#include "game_state.hpp"
 #include <glad/glad.h>
 
 #include <GLFW/glfw3.h>
@@ -25,8 +26,13 @@ int main(int argc, char **argv) {
 
   glViewport(0, 0, 800, 600);
   glClearColor(0,0,0,1);
+  game_state game;
+
   while(!glfwWindowShouldClose(window)){
       glClear(GL_COLOR_BUFFER_BIT);
+
+      game.render();
+
       glfwSwapBuffers(window);
       glfwPollEvents();
   }

@@ -1,3 +1,4 @@
+#pragma once
 #include "glad/glad.h"
 
 #include <string>
@@ -7,7 +8,7 @@ public:
   shader(GLenum shader_type);
   shader(shader &&s);
 
-  bool compile(std::string &file);
+  bool compile(const std::string &file);
   std::string info_log();
 
   GLuint raw_shader() const;

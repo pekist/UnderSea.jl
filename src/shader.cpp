@@ -11,7 +11,7 @@ shader::shader(GLenum shader_type) : _shader(glCreateShader(shader_type)) {}
 
 shader::shader(shader &&s) : _shader(std::exchange(s._shader, 0)) {}
 
-bool shader::compile(std::string &file) {
+bool shader::compile(const std::string &file) {
   std::ifstream fs;
   std::ostringstream sstr;
 
