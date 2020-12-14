@@ -4,7 +4,9 @@
 #include <stdexcept>
 static GLfloat triangle[] = {0.0, 1.0, -1.0, -1.0, 1.0, -1.0};
 
-game_state::game_state() : _buffers(1), _attributes(1), _vertices(_buffers.bind<GL_ARRAY_BUFFER>(0)) {
+game_state::game_state()
+    : _buffers(1), _attributes(1),
+      _vertices(_buffers.bind<decltype(_vertices)::Buffer_Type>(0)) {
   shader vertex_shader(GL_VERTEX_SHADER);
   shader fragment_shader(GL_FRAGMENT_SHADER);
 
@@ -12,8 +14,6 @@ game_state::game_state() : _buffers(1), _attributes(1), _vertices(_buffers.bind<
     std::cerr << vertex_shader.info_log() << std::endl;
     throw std::runtime_error("Failed to compile vertex shader");
   }
-
-
 
   if (!fragment_shader.compile("res/fragment.glsl")) {
     std::cerr << fragment_shader.info_log() << std::endl;
@@ -27,6 +27,7 @@ game_state::game_state() : _buffers(1), _attributes(1), _vertices(_buffers.bind<
     throw std::runtime_error("Failed to link shaders");
   }
 
+  auto binding = _buffers.bind<decltype(_vertices)::Buffer_Type>(0);
   auto attrib = _attributes.bind(0);
 
   attrib.pointer(0, 2, GL_FLOAT, 0, nullptr);
@@ -36,13 +37,14 @@ game_state::game_state() : _buffers(1), _attributes(1), _vertices(_buffers.bind<
 game_state::~game_state() {}
 
 void game_state::render() {
-  auto attrib = _attributes.bind(0);
-  auto binding = _buffers.bind<GL_ARRAY_BUFFER>(0);
-  _program.use();
-  auto &f = _vertices.get();
-  std::memcpy(f, triangle, sizeof(triangle));
-
-  glDrawArrays(GL_TRIANGLES, 0, 3);
-
-  shader_program::clear();
+  auto &buffer = _vertices.get();
+  for (int i = 0; i < 6; i++) {
+    buffer[i] = triangle[i];
+  }
+  {
+    _program.use();
+    auto attrib = _attributes.bind(0);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    shader_program::clear();
+  }
 }

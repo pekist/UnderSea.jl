@@ -30,7 +30,6 @@ int main(int argc, char **argv) {
   game_state game;
   while (!glfwWindowShouldClose(window)) {
     glClear(GL_COLOR_BUFFER_BIT);
-
     game.render();
 
     glfwSwapBuffers(window);

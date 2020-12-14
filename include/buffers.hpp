@@ -1,12 +1,17 @@
 #pragma once
 #include "glad/glad.h"
+
 #include <vector>
 
 template <const GLenum Type> class binding {
 public:
-  binding(GLuint buf) { glBindBuffer(Type, buf); }
+  binding(GLuint buf) {
+    glBindBuffer(Type, buf);
+  }
   binding(binding &&){};
-  ~binding() { glBindBuffer(Type, 0); }
+  ~binding() {
+    glBindBuffer(Type, 0);
+  }
 
   binding(const binding &) = delete;
   binding &operator=(const binding &) = delete;
