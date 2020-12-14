@@ -2,48 +2,52 @@
 
 #include <utility>
 #include <vector>
+
+program_binding::program_binding(GLuint n) { glUseProgram(n); }
+program_binding::~program_binding() { glUseProgram(0); }
+program_binding::program_binding(program_binding &&) {}
+
 shader_program::shader_program() : _program(glCreateProgram()) {}
 
 shader_program::shader_program(std::initializer_list<shader> shaders)
     : _program(glCreateProgram()) {
-  for (auto &s : shaders) {
-    glAttachShader(_program, s.raw_shader());
-  }
+    for (auto &s : shaders) {
+        glAttachShader(_program, s.raw_shader());
+    }
 }
 
 void shader_program::attach_shader(shader &s) {
-  glAttachShader(_program, s.raw_shader());
+    glAttachShader(_program, s.raw_shader());
 }
 
 shader_program::shader_program(shader_program &&s)
     : _program(std::exchange(s._program, 0)) {}
 
 bool shader_program::link_program() {
-  glLinkProgram(_program);
-  int status;
-  glGetProgramiv(_program, GL_LINK_STATUS, &status);
-  return status != 0;
+    glLinkProgram(_program);
+    int status;
+    glGetProgramiv(_program, GL_LINK_STATUS, &status);
+    return status != 0;
 }
 
 std::string shader_program::info_log() {
-  int len;
-  glGetProgramiv(_program, GL_INFO_LOG_LENGTH, &len);
-  if (len == 0){
-    return std::string();
-  }
+    int len;
+    glGetProgramiv(_program, GL_INFO_LOG_LENGTH, &len);
+    if (len == 0){
+        return std::string();
+    }
 
-  std::vector<char> info_log(len);
-  glGetProgramInfoLog(_program, len, nullptr, info_log.data());
-  return std::string(info_log.data(), len);
+    std::vector<char> info_log(len);
+    glGetProgramInfoLog(_program, len, nullptr, info_log.data());
+    return std::string(info_log.data(), len);
 }
 
 shader_program::~shader_program() {
-  if (_program != 0) {
-    glDeleteProgram(_program);
-  }
+    if (_program != 0) {
+        glDeleteProgram(_program);
+    }
 }
 
 GLuint shader_program::raw_program() const { return _program; }
 
-void shader_program::use() { glUseProgram(_program); }
-void shader_program::clear() { glUseProgram(0); }
+program_binding shader_program::bind() { return program_binding(_program); }

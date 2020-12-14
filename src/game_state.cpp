@@ -37,14 +37,8 @@ game_state::game_state()
 game_state::~game_state() {}
 
 void game_state::render() {
-  auto &buffer = _vertices.get();
-  for (int i = 0; i < 6; i++) {
-    buffer[i] = triangle[i];
-  }
-  {
-    _program.use();
-    auto attrib = _attributes.bind(0);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-    shader_program::clear();
-  }
+  std::memcpy(_vertices.get(), triangle, sizeof(triangle));
+  auto attrib = _attributes.bind(0);
+  auto program = _program.bind();
+  glDrawArrays(GL_TRIANGLES, 0, 3);
 }
