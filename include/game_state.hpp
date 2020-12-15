@@ -15,12 +15,12 @@ struct matrices_uniform {
 
 class game_state {
 public:
-  game_state(const window &);
+  game_state(window &);
   ~game_state();
   void render();
 
 private:
-  const window &_window;
+  window &_window;
   shader_program _program;
   attributes _attributes;
   buffers _buffers;

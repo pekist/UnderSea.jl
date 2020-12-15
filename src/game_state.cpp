@@ -6,7 +6,7 @@
 
 static GLfloat triangle[] = {0.0, 0.5, -0.5, -0.5, 0.5, -0.5};
 
-game_state::game_state(const window &w)
+game_state::game_state(window &w)
     : _window(w), _buffers(2), _attributes(1),
       _vertices(_buffers.bind<decltype(_vertices)::Buffer_Type>(0)),
       _matrices(_buffers.bind<decltype(_matrices)::Buffer_Type>(1)) {
@@ -51,9 +51,9 @@ game_state::~game_state() {}
 
 void game_state::render() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  if (_window.is_dirty()) {
-    _window.upload_perspective(_matrices.get().projection);
-  }
+
+  _window.upload_perspective(_matrices.get().projection);
+
   std::memcpy(_vertices.get(), triangle, sizeof(triangle));
 
   auto uniforms = _buffers.bind<decltype(_matrices)::Buffer_Type>(1);

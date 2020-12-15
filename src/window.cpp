@@ -22,8 +22,9 @@ window glfw::create_window(int w, int h) {
 }
 
 window::window(int x, int y, GLFWwindow *w)
-    : _window(w), _perspective(glm::perspective(
-                      glm::radians(45.0f), float(x) / float(y), 0.1f, 100.0f)) {
+    : _dirty(true), _window(w),
+      _perspective(glm::perspective(glm::radians(45.0f), float(x) / float(y),
+                                    0.1f, 100.0f)) {
   glfwMakeContextCurrent(_window);
 
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -33,17 +34,17 @@ window::window(int x, int y, GLFWwindow *w)
 
   glViewport(0, 0, x, y);
   glClearColor(0, 0, 0, 1);
-  glfwSetFramebufferSizeCallback(_window, [](GLFWwindow *glfwWindow, int x,
-                                             int y) {
-    window *w = static_cast<window *>(glfwGetWindowUserPointer(glfwWindow));
-    w->_dirty = true;
-    if (y != 0) {
-      w->_perspective =
-          glm::perspective(glm::radians(45.0f), float(x) / float(y), 0.1f, 100.0f);
-    }
+  glfwSetFramebufferSizeCallback(
+      _window, [](GLFWwindow *glfwWindow, int x, int y) {
+        window *w = static_cast<window *>(glfwGetWindowUserPointer(glfwWindow));
+        w->_dirty = true;
+        if (y != 0) {
+          w->_perspective = glm::perspective(glm::radians(45.0f),
+                                             float(x) / float(y), 0.1f, 100.0f);
+        }
 
-    glViewport(0, 0, x, y);
-  });
+        glViewport(0, 0, x, y);
+      });
 }
 
 window::window(window &&w) : _window(std::exchange(w._window, nullptr)) {}
@@ -58,6 +59,10 @@ void window::swap_buffers() { glfwSwapBuffers(_window); }
 void window::poll_events() { glfwPollEvents(); }
 bool window::should_close() { return glfwWindowShouldClose(_window); }
 bool window::is_dirty() const { return _dirty; }
-void window::upload_perspective(float *dst) const {
-  std::memcpy(dst, &_perspective[0][0], sizeof(float) * 16);
+
+void window::upload_perspective(float *dst) {
+  if (_dirty) {
+    std::memcpy(dst, &_perspective[0][0], sizeof(float) * 16);
+    _dirty = false;
+  }
 }

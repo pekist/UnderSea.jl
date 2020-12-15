@@ -12,7 +12,7 @@ public:
   window(const window &) = delete;
   window &operator=(const window &) = delete;
 
-  void upload_perspective(float *) const;
+  void upload_perspective(float *);
 
   void swap_buffers();
   void poll_events();
