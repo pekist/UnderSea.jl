@@ -17,7 +17,7 @@ game_state::game_state(window &w)
     : _window(w), _buffers(2), _attributes(1),
       _vertices(_buffers.bind<decltype(_vertices)::Buffer_Type>(0)),
       _matrices(_buffers.bind<decltype(_matrices)::Buffer_Type>(1)),
-      _chunk(glm::vec2(1.0f, 1.0f), 0.01f),
+      _chunk(glm::vec2(1.0f, 1.0f), 0.05f),
       _texture(0, 256, 256, &_chunk.chunk[0][0]) {
   shader vertex_shader(GL_VERTEX_SHADER);
   shader fragment_shader(GL_FRAGMENT_SHADER);
@@ -51,7 +51,7 @@ game_state::game_state(window &w)
                     sizeof(matrices_uniform));
 
   glm::mat4 half(1.0f);
-  half = glm::translate(half, glm::vec3(0.0, 0.0, -10.0f));
+  half = glm::translate(half, glm::vec3(0.0, 0.0, -3.0f));
 
   _window.upload_perspective(_matrices.get().projection);
   std::memcpy(_matrices.get().view, &half[0][0], sizeof(half));
