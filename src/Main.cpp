@@ -1,7 +1,9 @@
 #include "game_state.hpp"
+
 #include "window.hpp"
 
 #include <iostream>
+#include <glm/gtc/noise.hpp>
 
 int main(int argc, char **argv) {
 

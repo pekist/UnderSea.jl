@@ -1,6 +1,33 @@
 [
     {
         "arguments": [
+            "clang",
+            "-c",
+            "-g",
+            "-Iinclude",
+            "-o",
+            "src/glad.o",
+            "src/glad.c"
+        ],
+        "directory": "/home/pks/src/under-sea",
+        "file": "src/glad.c"
+    },
+    {
+        "arguments": [
+            "clang++",
+            "-c",
+            "--std=c++20",
+            "-g",
+            "-Iinclude",
+            "-o",
+            "src/shader.o",
+            "src/shader.cpp"
+        ],
+        "directory": "/home/pks/src/under-sea",
+        "file": "src/shader.cpp"
+    },
+    {
+        "arguments": [
             "clang++",
             "-c",
             "--std=c++20",
@@ -29,16 +56,17 @@
     },
     {
         "arguments": [
-            "clang",
+            "clang++",
             "-c",
+            "--std=c++20",
             "-g",
             "-Iinclude",
             "-o",
-            "src/glad.o",
-            "src/glad.c"
+            "src/buffers.o",
+            "src/buffers.cpp"
         ],
         "directory": "/home/pks/src/under-sea",
-        "file": "src/glad.c"
+        "file": "src/buffers.cpp"
     },
     {
         "arguments": [
@@ -48,10 +76,38 @@
             "-g",
             "-Iinclude",
             "-o",
-            "src/shader.o",
-            "src/shader.cpp"
+            "src/shader_program.o",
+            "src/shader_program.cpp"
         ],
         "directory": "/home/pks/src/under-sea",
-        "file": "src/shader.cpp"
+        "file": "src/shader_program.cpp"
+    },
+    {
+        "arguments": [
+            "clang++",
+            "-c",
+            "--std=c++20",
+            "-g",
+            "-Iinclude",
+            "-o",
+            "src/window.o",
+            "src/window.cpp"
+        ],
+        "directory": "/home/pks/src/under-sea",
+        "file": "src/window.cpp"
+    },
+    {
+        "arguments": [
+            "clang++",
+            "-c",
+            "--std=c++20",
+            "-g",
+            "-Iinclude",
+            "-o",
+            "src/attributes.o",
+            "src/attributes.cpp"
+        ],
+        "directory": "/home/pks/src/under-sea",
+        "file": "src/attributes.cpp"
     }
 ]

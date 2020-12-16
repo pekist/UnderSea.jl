@@ -4,12 +4,21 @@
 #include <iostream>
 #include <stdexcept>
 
-static GLfloat triangle[] = {0.0, 0.5, -0.5, -0.5, 0.5, -0.5};
+static GLfloat mesh[] = {
+    -1.0, -1.0, 0.0, 1.0, 0.0, 0.0,
+    -1.0, 1.0,  0.0, 1.0, 0.0, 1.0,
+    1.0,  1.0,  0.0, 1.0, 1.0, 1.0,
+    1.0,  1.0,  0.0, 1.0, 1.0, 1.0,
+    1.0,  -1.0, 0.0, 1.0, 1.0, 0.0,
+    -1.0, -1.0, 0.0, 1.0, 0.0, 0.0};
+
 
 game_state::game_state(window &w)
     : _window(w), _buffers(2), _attributes(1),
       _vertices(_buffers.bind<decltype(_vertices)::Buffer_Type>(0)),
-      _matrices(_buffers.bind<decltype(_matrices)::Buffer_Type>(1)) {
+      _matrices(_buffers.bind<decltype(_matrices)::Buffer_Type>(1)),
+      _chunk(glm::vec2(1.0f, 1.0f), 0.01f),
+      _texture(0, 256, 256, &_chunk.chunk[0][0]) {
   shader vertex_shader(GL_VERTEX_SHADER);
   shader fragment_shader(GL_FRAGMENT_SHADER);
 
@@ -33,15 +42,16 @@ game_state::game_state(window &w)
   auto binding1 = _buffers.bind<decltype(_vertices)::Buffer_Type>(0);
   auto binding2 = _buffers.bind<decltype(_matrices)::Buffer_Type>(1);
   auto attrib = _attributes.bind(0);
+  attrib.pointer(0, 4, GL_FLOAT, 6 * sizeof(GLfloat), nullptr);
+  attrib.pointer(1, 2, GL_FLOAT, 6 * sizeof(GLfloat), &static_cast<float *>(nullptr)[4]);
 
-  attrib.pointer(0, 2, GL_FLOAT, 0, nullptr);
   attrib.enable(0);
-
+  attrib.enable(1);
   glBindBufferRange(GL_UNIFORM_BUFFER, 2, _buffers[1], 0,
                     sizeof(matrices_uniform));
 
   glm::mat4 half(1.0f);
-  half = glm::scale(half, glm::vec3(0.4f));
+  half = glm::translate(half, glm::vec3(0.0, 0.0, -10.0f));
 
   _window.upload_perspective(_matrices.get().projection);
   std::memcpy(_matrices.get().view, &half[0][0], sizeof(half));
@@ -54,11 +64,11 @@ void game_state::render() {
 
   _window.upload_perspective(_matrices.get().projection);
 
-  std::memcpy(_vertices.get(), triangle, sizeof(triangle));
+  std::memcpy(_vertices.get(), mesh, sizeof(mesh));
 
   auto uniforms = _buffers.bind<decltype(_matrices)::Buffer_Type>(1);
   auto attrib = _attributes.bind(0);
   auto program = _program.bind();
 
-  glDrawArrays(GL_TRIANGLES, 0, 3);
+  glDrawArrays(GL_TRIANGLES, 0, 6);
 }
