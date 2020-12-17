@@ -21,9 +21,9 @@ window glfw::create_window(int w, int h) {
 }
 
 window::window(int x, int y, GLFWwindow *w)
-    : _dirty(true), _window(w),
-      _perspective(glm::perspective(glm::radians(45.0f), float(x) / float(y),
-                                    0.1f, 100.0f)) {
+    : _window(w), _perspective(glm::perspective(
+                      glm::radians(45.0f), float(x) / float(y), 0.1f, 100.0f)),
+      _dirty(true) {
   glfwMakeContextCurrent(_window);
 
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -33,6 +33,7 @@ window::window(int x, int y, GLFWwindow *w)
 
   glViewport(0, 0, x, y);
   glClearColor(0, 0, 0, 1);
+  glEnable(GL_DEPTH_TEST);
   glfwSetFramebufferSizeCallback(
       _window, [](GLFWwindow *glfwWindow, int x, int y) {
         window *w = static_cast<window *>(glfwGetWindowUserPointer(glfwWindow));

@@ -11,8 +11,10 @@ template <typename T, const GLenum Type> class buffer_storage {
 public:
   static const GLenum Buffer_Type = Type;
   typedef T value_type;
-    buffer_storage(binding<Type> &&t) {
-    auto flags = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
+  buffer_storage(binding<Type> &&t, GLenum flags = GL_MAP_WRITE_BIT |
+                                                   GL_MAP_PERSISTENT_BIT |
+                                                   GL_MAP_COHERENT_BIT) {
+
     glBufferStorage(Type, sizeof(T), nullptr, flags);
     _buffer = static_cast<T *>(glMapBufferRange(Type, 0, sizeof(T), flags));
   }

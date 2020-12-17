@@ -5,16 +5,20 @@
 
 template <const GLenum Type> class binding {
 public:
-  binding(GLuint buf) {
-    glBindBuffer(Type, buf);
-  }
+  binding(GLuint buf) : _buf(buf) { glBindBuffer(Type, buf); }
   binding(binding &&){};
-  ~binding() {
-    glBindBuffer(Type, 0);
+  ~binding() { glBindBuffer(Type, 0); }
+
+  binding &buffer_base(GLuint index) {
+    glBindBufferBase(Type, index, _buf);
+    return *this;
   }
 
   binding(const binding &) = delete;
   binding &operator=(const binding &) = delete;
+
+private:
+  GLuint _buf;
 };
 
 class buffers {

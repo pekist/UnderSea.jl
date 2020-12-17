@@ -1,24 +1,43 @@
 #include "game_state.hpp"
+
 #include <cstring>
 #include <glm/ext.hpp>
 #include <iostream>
 #include <stdexcept>
 
 static GLfloat mesh[] = {
-    -1.0, -1.0, 0.0, 1.0, 0.0, 0.0,
-    -1.0, 1.0,  0.0, 1.0, 0.0, 1.0,
-    1.0,  1.0,  0.0, 1.0, 1.0, 1.0,
-    1.0,  1.0,  0.0, 1.0, 1.0, 1.0,
-    1.0,  -1.0, 0.0, 1.0, 1.0, 0.0,
-    -1.0, -1.0, 0.0, 1.0, 0.0, 0.0};
+    -1.0, -1.0, 1.0,  0.0,  0.0,  1.0,  -1.0, 1.0,  1.0,  0.0,  0.0,  1.0,
+    1.0,  1.0,  1.0,  0.0,  0.0,  1.0,  1.0,  1.0,  1.0,  0.0,  0.0,  1.0,
+    1.0,  -1.0, 1.0,  0.0,  0.0,  1.0,  -1.0, -1.0, 1.0,  0.0,  0.0,  1.0,
 
+    -1.0, -1.0, -1.0, -1.0, 0.0,  0.0,  -1.0, -1.0, 1.0,  -1.0, 0.0,  0.0,
+    -1.0, 1.0,  1.0,  -1.0, 0.0,  0.0,  -1.0, 1.0,  1.0,  -1.0, 0.0,  0.0,
+    -1.0, 1.0,  -1.0, -1.0, 0.0,  0.0,  -1.0, -1.0, -1.0, -1.0, 0.0,  0.0,
+
+    1.0,  -1.0, -1.0, 1.0,  0.0,  0.0,  1.0,  -1.0, 1.0,  1.0,  0.0,  0.0,
+    1.0,  1.0,  1.0,  1.0,  0.0,  0.0,  1.0,  1.0,  1.0,  1.0,  0.0,  0.0,
+    1.0,  1.0,  -1.0, 1.0,  0.0,  0.0,  1.0,  -1.0, -1.0, 1.0,  0.0,  0.0,
+
+    -1.0, 1.0,  -1.0, 0.0,  1.0,  0.0,  -1.0, 1.0,  1.0,  0.0,  1.0,  0.0,
+    1.0,  1.0,  1.0,  0.0,  1.0,  0.0,  1.0,  1.0,  1.0,  0.0,  1.0,  0.0,
+    1.0,  1.0,  -1.0, 0.0,  1.0,  0.0,  -1.0, 1.0,  -1.0, 0.0,  1.0,  0.0,
+
+    -1.0, -1.0, -1.0, 0.0,  -1.0, 0.0,  -1.0, -1.0, 1.0,  0.0,  -1.0, 0.0,
+    1.0,  -1.0, 1.0,  0.0,  -1.0, 0.0,  1.0,  -1.0, 1.0,  0.0,  -1.0, 0.0,
+    1.0,  -1.0, -1.0, 0.0,  -1.0, 0.0,  -1.0, -1.0, -1.0, 0.0,  -1.0, 0.0,
+
+    -1.0, -1.0, -1.0, 0.0,  0.0,  -1.0, -1.0, 1.0,  -1.0, 0.0,  0.0,  -1.0,
+    1.0,  1.0,  -1.0, 0.0,  0.0,  -1.0, 1.0,  1.0,  -1.0, 0.0,  0.0,  -1.0,
+    1.0,  -1.0, -1.0, 0.0,  0.0,  -1.0, -1.0, -1.0, -1.0, 0.0,  0.0,  -1.0,
+};
 
 game_state::game_state(window &w)
-    : _window(w), _buffers(2), _attributes(1),
+    : _window(w), _attributes(1), _buffers(2),
       _vertices(_buffers.bind<decltype(_vertices)::Buffer_Type>(0)),
       _matrices(_buffers.bind<decltype(_matrices)::Buffer_Type>(1)),
-      _chunk(glm::vec2(1.0f, 1.0f), 0.05f),
-      _texture(0, 256, 256, &_chunk.chunk[0][0]) {
+      _chunk(glm::vec2(0.0, 0.0), 16 * 32, 16 * 32) {
+
+  _chunk.generate();
   shader vertex_shader(GL_VERTEX_SHADER);
   shader fragment_shader(GL_FRAGMENT_SHADER);
 
@@ -42,8 +61,9 @@ game_state::game_state(window &w)
   auto binding1 = _buffers.bind<decltype(_vertices)::Buffer_Type>(0);
   auto binding2 = _buffers.bind<decltype(_matrices)::Buffer_Type>(1);
   auto attrib = _attributes.bind(0);
-  attrib.pointer(0, 4, GL_FLOAT, 6 * sizeof(GLfloat), nullptr);
-  attrib.pointer(1, 2, GL_FLOAT, 6 * sizeof(GLfloat), &static_cast<float *>(nullptr)[4]);
+  attrib.pointer(0, 3, GL_FLOAT, 6 * sizeof(GLfloat), nullptr);
+  attrib.pointer(1, 3, GL_FLOAT, 6 * sizeof(GLfloat),
+                 (void *)(3 * sizeof(GLfloat)));
 
   attrib.enable(0);
   attrib.enable(1);
@@ -51,7 +71,8 @@ game_state::game_state(window &w)
                     sizeof(matrices_uniform));
 
   glm::mat4 half(1.0f);
-  half = glm::translate(half, glm::vec3(0.0, 0.0, -3.0f));
+  half = glm::scale(half, glm::vec3(0.5));
+  half = glm::translate(half, glm::vec3(0.0, 0.0, -20.0f));
 
   _window.upload_perspective(_matrices.get().projection);
   std::memcpy(_matrices.get().view, &half[0][0], sizeof(half));
@@ -60,15 +81,35 @@ game_state::game_state(window &w)
 game_state::~game_state() {}
 
 void game_state::render() {
+  static int frame;
+  static float start, end;
+
+  start = end;
+  int buffer_num = frame % 3;
+
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+  glm::mat4 half(1.0f);
+  half = glm::scale(half, glm::vec3(0.5));
+  half = glm::translate(half, glm::vec3(0.0, 0.0, -10.0f));
+  half = glm::rotate(half, float(glfwGetTime()), glm::vec3(0.0, 1.0, 1.0));
+  std::memcpy(_matrices.get().view, &half[0][0], sizeof(half));
   _window.upload_perspective(_matrices.get().projection);
 
-  std::memcpy(_vertices.get(), mesh, sizeof(mesh));
+  std::memcpy(&_vertices.get()[sizeof(mesh) / sizeof(mesh[0]) * buffer_num],
+              mesh, sizeof(mesh));
 
   auto uniforms = _buffers.bind<decltype(_matrices)::Buffer_Type>(1);
   auto attrib = _attributes.bind(0);
   auto program = _program.bind();
 
-  glDrawArrays(GL_TRIANGLES, 0, 6);
+  glDrawArrays(GL_TRIANGLES, 0 * 36 * buffer_num, 36 + 36 * buffer_num);
+
+  end = glfwGetTime();
+  float delta = end - start;
+  if (frame % 100 == 0) {
+    std::cout << delta * 60 << std::endl;
+  }
+
+  frame++;
 }

@@ -1,8 +1,8 @@
 CC=clang
 CXX=clang++
 LD=clang++
-CFLAGS=-g -Iinclude
-CXXFLAGS=--std=c++20 -g -Iinclude
+CFLAGS=-g -Iinclude -Wall
+CXXFLAGS=--std=c++20 -g -Iinclude -Wall
 LDFLAGS=-g -ldl $(shell pkg-config --libs glfw3)
 CSRC=$(shell find . -name '*.c')
 CXXSRC=$(shell find . -name '*.cpp')

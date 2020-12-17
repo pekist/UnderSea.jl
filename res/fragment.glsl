@@ -1,10 +1,11 @@
 #version 460 core
 
-in vec2 out_texture;
+in vec3 pass_normal;
+
 out vec4 color;
 
 layout (location = 3) uniform sampler2D textureUnit;
 
 void main(){
-    color = texture(textureUnit, out_texture);
+     color = vec4(pass_normal, 1.0);
 }

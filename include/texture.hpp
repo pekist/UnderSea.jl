@@ -1,8 +1,10 @@
+#pragma once
+
 #include "glad/glad.h"
 
 class texture {
 public:
-  texture(GLuint texture_unit, int w, int h, GLubyte *data);
+  texture(GLuint texture_unit, int w, int h, float *ptr);
   ~texture();
   void bind_uniform(GLuint uniform);
 
