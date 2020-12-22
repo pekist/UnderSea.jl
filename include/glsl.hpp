@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include <glm/glm.hpp>
 #include <sstream>
 #include <string>
@@ -9,6 +10,7 @@
 namespace glsl {
 template <typename T> class shader_node;
 template <typename T> class variable;
+template <typename Ret, typename... Arg> class function;
 template <typename T> class op_assign;
 template <typename A, typename B> class op_next;
 
@@ -16,7 +18,6 @@ struct vec4 {
   typedef glm::vec4 glm_type;
   typedef float type[4];
 };
-
 
 template <typename T> class shader_node {
 public:
@@ -37,9 +38,7 @@ public:
 
   bool operator==(variable<T> v) { return v._name == _name; }
 
-  virtual void compile(std::ostream &out) const {
-      out << _name;
-  }
+  virtual void compile(std::ostream &out) const { out << _name; }
 
 private:
   std::string _name;
@@ -66,26 +65,27 @@ public:
   op_next(const shader_node<A> &, const shader_node<B> &);
 };
 
-class program {
-public:
-    program(const shader_node<void> &node);
-    void compile(std::ostream &out) const;
-private:
-    const shader_node<void> &_node;
+template <typename R, typename... Args>
+class function : public shader_node<void> {
+  virtual void compile(std::ostream &out) const {}
 };
-
 
 class shader {
 public:
   shader();
   template <typename A> variable<A> in(std::string &&x) {
-      _inputs.emplace_back(std::move(x));
+    _inputs.emplace_back(std::move(x));
     return variable<A>(_inputs.back()._name);
   }
 
-  program main(const shader_node<void> &m) const;
+  std::string compile(const shader_node<void> &m) const;
 
-private:
+  template <typename Ret, typename... Args>
+  function<Ret> fn(const std::string &name,
+                   std::function<const shader_node<Ret> &()> fn) {
+    return function<Ret, Args...>(name, fn);
+  }
+
   struct variable_info {
     std::string _name;
     variable_info(std::string &&name);
@@ -95,4 +95,6 @@ private:
 };
 
 variable<vec4> gl_position("gl_Position");
+
+template <typename... Attribs> struct vbo_buffer {};
 }; // namespace glsl
