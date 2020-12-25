@@ -5,6 +5,11 @@ project(UnderSea)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+set(ASMJIT_EMBED TRUE)
+add_Definitions(-DASMJIT_STATIC)
+set(ASMJIT_DIR "asmjit/")
+include("${ASMJIT_DIR}/CMakeLists.txt")
+
 add_executable(under-sea src/Main.cpp
                          src/attributes.cpp
                          src/buffers.cpp
@@ -14,11 +19,11 @@ add_executable(under-sea src/Main.cpp
                          src/shader_program.cpp
                          src/texture.cpp
                          src/window.cpp
-                         src/world_chunk.cpp)
+                         src/world_chunk.cpp
+                         ${ASMJIT_SRC})
 
 target_include_directories(under-sea PRIVATE include)
 
-target_link_libraries(under-sea PUBLIC dl)
-target_link_libraries(under-sea PUBLIC glfw)
+target_link_libraries(under-sea dl glfw ${ASMJIT_DEPS})
 
 file(COPY res/ DESTINATION "${CMAKE_BINARY_DIR}/res")
