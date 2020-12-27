@@ -1,7 +1,7 @@
 #include "game_state.hpp"
-
 #include "window.hpp"
 
+#include <future>
 #include <iostream>
 #include <glm/gtc/noise.hpp>
 

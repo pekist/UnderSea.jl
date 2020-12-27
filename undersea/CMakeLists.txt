@@ -5,13 +5,11 @@ project(UnderSea)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-set(ASMJIT_EMBED TRUE)
-add_Definitions(-DASMJIT_STATIC)
-set(ASMJIT_DIR "asmjit/")
+set(FISH_DIR "../fish/")
+include("${FISH_DIR}/CMakeLists.txt")
 
-include("${ASMJIT_DIR}/CMakeLists.txt")
-
-set(UNDERSEA_SRC src/Main.cpp
+set(UNDERSEA_SRC
+  src/Main.cpp
   src/attributes.cpp
   src/buffers.cpp
   src/game_state.cpp
@@ -21,11 +19,11 @@ set(UNDERSEA_SRC src/Main.cpp
   src/texture.cpp
   src/window.cpp
   src/world_chunk.cpp)
+
 set(UNDERSEA_DEPS dl glfw)
 
 add_executable(under-sea
-  ${UNDERSEA_SRC}
-  ${ASMJIT_SRC})
+  ${UNDERSEA_SRC})
 
 target_include_directories(under-sea PRIVATE include)
 

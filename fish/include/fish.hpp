@@ -1,8 +1,11 @@
 #pragma once
 #include <cctype>
-#include <cstdlib>
+#include <cstdint>
 #include <cstdio>
+#include <cstdlib>
+#include <vector>
 
+namespace fish {
 const std::size_t BUFSIZE = 256;
 
 class token {
@@ -11,8 +14,8 @@ class token {
 
 public:
   token(char const *str, unsigned int l);
-  std::size_t get_length();
-  const char *get_ptr();
+  std::size_t get_length() const;
+  const char *get_ptr() const;
 };
 
 class token_stream {
@@ -31,30 +34,26 @@ public:
   ~token_stream();
 
   token next_token();
-  bool has_next();
-};
-
-class code_block {
-  void *buffer;
-
-public:
-  code_block(void *b, std::size_t remaining);
 };
 
 class dictionary {
   struct entry {
-    entry *previous;
-    unsigned int length;
-    char string[];
+    entry *last;
+    void (*function)(void);
+    char name[];
   };
 
-  entry *head;
-  entry *tail;
-  std::size_t buffer_size;
-
+  std::size_t size;
+  void *base;
+  entry *here;
 public:
-  dictionary(std::size_t buffer);
+  dictionary(std::size_t allocation);
   ~dictionary();
-  const entry *follow(token &tok) const;
-  code_block add(token &token);
+  const entry *lookup(const token &c) const;
+  void add(const char *,  uint32_t n, void (*)(void));
 };
+
+extern dictionary global_dictionary;
+
+void eval(const char *file);
+}

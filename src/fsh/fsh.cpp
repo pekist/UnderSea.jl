@@ -1,6 +1,8 @@
 #include "fsh.hpp"
+#include "asmjit/x86.h"
 
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <iostream>
 #include <memory>
@@ -41,33 +43,4 @@ token token_stream::next_token() {
     }
   }
   return {current_token, length};
-}
-
-dictionary::dictionary(std::size_t buffer)
-    : head((entry *)std::malloc(buffer)), tail(head), buffer_size(buffer) {
-  tail->previous = nullptr;
-  tail->length = 0;
-}
-dictionary::~dictionary() {
-    if(head != nullptr) {
-        free(head);
-    }
-}
-
-code_block add(token &token) {
-  unsigned int length = token.get_length();
-  tail->length = length;
-  memcpy(tail->string, token.get_ptr(), length);
-  return {&tail->string[length],
-          buffer_size -
-              ((std::size_t)(&(tail->string[length])) - (std::size_t)head)};
-}
-
-const entry *dictionary::follow(token &tok) const {
-  const entry *tracking = tail->previous;
-  while (tracking != nullptr && tracking->length == tok.get_length() &&
-         std::strncmp(tok.get_ptr(), tracking->string, tok.get_length())) {
-    tracking = tracking->previous;
-  }
-  return tracking;
 }
