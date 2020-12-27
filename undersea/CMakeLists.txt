@@ -4,7 +4,7 @@ project(UnderSea)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-
+set(FISH_EMBED True)
 set(FISH_DIR "../fish/")
 include("${FISH_DIR}/CMakeLists.txt")
 

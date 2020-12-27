@@ -1,25 +1,16 @@
 #include "fish.hpp"
 
 #include <iostream>
-
-
-void raw_print() {
-    uint32_t t;
-    asm volatile (
-        "mov 0(%%r12), %0\n"
-        "sub $4, %%r12\n"
-        : "=r" (t)
-    );
-    std::cout << t << std::endl;
-}
+#include <llvm-10/llvm/Support/raw_ostream.h>
 
 int main(int argc, char **argv) {
-    if(argc < 2) {
-        std::cout << "Need to provide file" << std::endl;
-        return 1;
-    }
+    fish::compiler compiler;
+    auto &add = compiler.intern("+");
+    add.name = "+";
+    add.flags = fish::word_entry::PRIMITIVE;
 
-    fish::global_dictionary.add("print", 5, raw_print);
-    fish::eval(argv[1]);
-    return 0;
+    auto stream = fish::create_token_stream("../test.fish");
+    auto tokens = compiler.tokenize(*stream);
+    auto *value = compiler.compile(tokens);
+    value->print(llvm::errs());
 }
